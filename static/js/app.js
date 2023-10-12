@@ -1,135 +1,104 @@
-// // // // arrow function
-// // // const calAge3 = (birthyear) => 2023 - birthyear;
-// // // const ageOfPerson3 = calAge3(1950);
-// // // console.log(ageOfPerson3);
+// // // // // // arrow function
+// // // // // const calAge3 = (birthyear) => 2023 - birthyear;
+// // // // // const ageOfPerson3 = calAge3(1950);
+// // // // // console.log(ageOfPerson3);
+
+// // // // // d3.json(url2)
 
 
-// // // //lesson 15 method
-// // // let url2 = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
+// const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
 
-// // // d3.json(url2)
+// // // // //method one to get data
+// // // // const data = d3.json(url);
+// // // // console.log(data);
+
+// // selDataset is id for dropdown menu for the html
+// d3.selectAll("#selDataset").on("change", getData);
+
+// // Define the getData function to update the charts and metadata
+// function getData() {
+ 
+//        // Retrieve the selected sample ID from the dropdown
+//        const selectedSampleId = d3.select("#selDataset").property("value");
+
+//        // Call functions to update charts and metadata with the selected sample id
+//        updateCharts(selectedSampleId);
+//        updateMetadata(selectedSampleId);
+// }
 
 
-const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
-
-// // //method one to get data
-// // const data = d3.json(url);
-// // console.log(data);
-
-//method two to get data
-d3.json(url).then(function (data) {
-
-    console.log(data); 
 
 
-//grabs data and inputs sample_values into a array for function manipulation
-//sampleValueArray = data.samples.sample_values;
 
- // creates function to test grab the data we are 
- // planning to put into a plot
-  function popular(varR){
-    return varR.sample_values.slice(0, 10).reverse();
-  }
+function buildMetadata(sample) {
+  d3.json("https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json").then((data) => {
+    let metadata = data.metadata;
+   
+    let resultArray = metadata.filter(sampleObj => sampleObj.id == sample);
+    let result = resultArray[0];
+    // Use d3 to select the panel with id of `#sample-metadata`
+    let PANEL = d3.select("#sample-metadata");
 
-  // calls the popular function to run said function
-  let topResults = popular(data.samples[0]);
+    for (key in result){
+      PANEL.append("h6").text(`${key.toUpperCase()}: ${result[key]}`);
+    };
 
- // checks to see if function is working correctlly
-  console.log(topResults);
+  
+   // buildGauge(result.wfreq);
+  });
+}
 
- //grabs data and inputs first instance of sample_values into a array
-  sampleArray = data.samples[0].id;
+function buildCharts(sample) {
+  d3.json("https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json").then((data) => {
+   let samples = data.samples;
+  let resultArray = samples.filter(sampleObj => sampleObj.id == sample);
+  let sampleData = resultArray[0];
+  
+  //     let otu_ids = result.otu_ids;
+  //     let otu_labels = result.otu_labels;
+  //     let sample_values = result.sample_values;
+
+  //sampleArray = data.samples[0];
+
+  //grabs data and inputs first instance of id into a array
+  titleArray = data.samples[0].id;
+
 
   // creates parts for the skeleton of the bar chart
-  const values = data.samples[0].sample_values.slice(0, 10).reverse();
-  const labels = data.samples[0].otu_ids.slice(0, 10).map(id => `OTU ${id}`).reverse();
-  const hovertext = data.samples[0].otu_labels.slice(0, 10).reverse();
+  let labels = sampleData.otu_ids.slice(0, 10).map(id => `OTU ${id}`).reverse();
+  let barValues = sampleData.sample_values.slice(0, 10).reverse();
+  let hovertext = sampleData.otu_labels.slice(0, 10).reverse();
+ 
+//   let hovertext = data.samples[0].otu_labels.slice(0, 10).reverse();
 
   // Creates the skeleton of the bar chart
-  const trace = {
+  let barTrace = {
     type: 'bar',
     orientation: 'h',
-    x: values,
+    x: barValues,
     y: labels,
     text: hovertext
   };
 
   // Creates data array for the plot
-  const data2 = [trace];
+  let barData = [barTrace];
 
   // Creates a title
-  const layout = {
-    title: `Top 10 OTUs for Sample ${sampleArray}`,
+  let barLayout = {
+    title: `Top 10 OTUs for Sample ${titleArray}`,
   };
 
   // Plots the bar chart
-  Plotly.newPlot('bar', data2, layout);
-
-
-});
-
-//const url = "https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json";
-
-
-d3.json(url).then(function (data) {
-
-    console.log(data); 
-    
-
-    console.log("------data----------this will create a visible linebreak in the console between console.log(data) and the below code" );
-
- //grabs data and inputs sample_values into a array for function manipulation
-  otu_idsArray = data.samples.otu_ids;
-  sampleValueArray = data.samples.sample_values;
-
- // creates function to test grab the data we are 
- // planning to put into a plot
-  function popularX(varX)
-    {
-
-    return varX.otu_ids,
-    varX.sample_values,
-    varX.otu_labels;
-
-    // if (varX !== undefined || varX !== null)
-    //  {
-    //     iHateErrors = console.log("varX is not null and defined.");
-    //     return iHateErrors;
-    //   }
-    //         else if (varX == undefined && varX !== null)
-    //         {
-    //          itIsUndefinedCode = console.log ("varX is undefined, not null.");
-    //          return itIsUndefinedCode;
-    //          }
-    //                  else (varX ==! undefined && varX == null)
-    //                   {
-    //                  iHateErrors = console.log("varX is not defined, its null, and a pain in the ass.");
-    //                  return iHateErrors;
-    //                  }
-
-    }; //function popular ending bracket
-
-  // calls the popular function to run said function
-  let topResults = popularX(data.samples[0]);
-
- // checks to see if function is working correctlly
-  console.log(topResults);
-
- //
- console.log("----------------this will create a visible linebreak in the console between console.log topResults and the below code" );
-
- //grabs data and inputs first instance of sample_values into a array
-  sampleArray = data.samples[0].id;
+  Plotly.newPlot('bar', barData, barLayout);
 
   // creates parts for the skeleton of the bubble chart
-  const values = data.samples[0].sample_values;
-  const otuIds = data.samples[0].otu_ids;
-  //const otuIds = data.samples[0].otu_ids.map(id => `OTU ${id}`);
-  const otuLabels = data.samples[0].otu_labels;
+  let values = sampleData.sample_values;
+  let otuIds = sampleData.otu_ids;
+  let otuLabels = sampleData.otu_labels;
 
-  // Creates the skeleton of the bubble chart
-  // using Hover Text on Bubble Charts from https://plotly.com/javascript/bubble-charts/
-  var trace = 
+//   // Creates the skeleton of the bubble chart
+//   // using Hover Text on Bubble Charts from https://plotly.com/javascript/bubble-charts/
+  var bubbleTrace = 
   {
     x: otuIds,
     y: values,
@@ -142,12 +111,11 @@ d3.json(url).then(function (data) {
       }
     };
   
-
-  // Creates data array for the plot
-  var data3 = [trace];
+  // Creates data array for the bubble plot
+  var bubbleData = [bubbleTrace];
 
   // Creates a title
-  var layout = {
+  var bubbleLayout = {
     title: `OTU IDS`,
     showlegend: true,
     height: 600,
@@ -155,38 +123,41 @@ d3.json(url).then(function (data) {
   };
 
   // Plots the bubble chart
-  Plotly.newPlot('bubble', data3, layout);
-
+  Plotly.newPlot('bubble', bubbleData, bubbleLayout);
 
 });
+}
 
+  // init function here provides us a default value to show to the users
+  function init() {
+   
+    let selector = d3.select("#selDataset");
+  
+    // Use the list of sample names to populate the select options
+    d3.json("https://2u-data-curriculum-team.s3.amazonaws.com/dataviz-classroom/v1.1/14-Interactive-Web-Visualizations/02-Homework/samples.json").then((data) => {
+      let sampleNames = data.names;
+  
+      for (let i = 0; i < sampleNames.length; i++){
+        selector
+          .append("option")
+          .text(sampleNames[i])
+          .property("value", sampleNames[i]);
+      };
+  
+      // Use the first sample from the list to build the initial plots
+      let firstSample = sampleNames[0];
+      buildCharts(firstSample);
+      buildMetadata(firstSample);
+    });
+  }
+  
+  function optionChanged(newSample) {
+    // Fetch new data each time a new sample is selected
+    buildCharts(newSample);
+    buildMetadata(newSample);
+  }
+  
+  // Initialize the dashboard
+  init();
+  
 
-// sampleDataZero = Object.values(data.samples[0].id)
-
-// d3.json(url).then(function (data) {
-
-//   console.log(data); 
-
-//   sampleArray = data.samples[0].id;
-
-//   // creates parts for the skeleton of the dempgraphic info chart
-//   let IdNum = Object.keys(samples[0].otu_ids);
- 
-// });
-
-// let table = d3.select("panel-body");
-
-// let tbody = d3.select("sample-metadata");
-
-// let grades = [ ["Juliana", 98], ["Devin", 88], ["Nestor", 92], ["Jack", 90], ["Chris", 89]];
-
-// for (let i =0; i < grades.length; i++ ){
-    
-//     let sampleGrabber = grades[i]
-
-//     let row = tbody.append("tr")
-
-//     row.append("td").text(sampleGrabber[0])// name of the student
-//     row.append("td").text(sampleGrabber[1]) // grade of the student
-    
-// }
