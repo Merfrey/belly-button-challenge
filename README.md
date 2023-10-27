@@ -1,12 +1,4 @@
 # belly-button-challenge
 belly button biodiversity
 
-
-The format of the following line in the app.js document is not my own.
-
-
-   document.getElementById("sample-metadata").innerHTML = 
-
-
-It came from https://stackoverflow.com/a/4879092, written by user113716
-
+Much apprciation goes out to the two TAs who helped me with the Dempgraphic Panel output, and making the dropdown menu function correctly.
