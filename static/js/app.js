@@ -39,6 +39,9 @@ function buildMetadata(sample) {
     // Use d3 to select the panel with id of `#sample-metadata`
     let PANEL = d3.select("#sample-metadata");
 
+    // Use `.html("") to clear any existing metadata
+    PANEL.html(""); 
+
     for (key in result){
       PANEL.append("h6").text(`${key.toUpperCase()}: ${result[key]}`);
     };
